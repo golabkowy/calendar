@@ -1,0 +1,16 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "test server for calendar app",
+  "main": "app.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "golabkowy",
+  "license": "ISC",
+  "dependencies": {
+    "expres": "0.0.5",
+    "express": "^4.17.1",
+    "socket.io": "^3.0.3"
+  }
+}
