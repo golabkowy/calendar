@@ -3,7 +3,11 @@ import {Button} from "react-bootstrap";
 
 class DeleteButton extends React.Component {
     render() {
-        return <Button>DELETE BUTTON</Button>
+        return <Button>
+            {
+                this.props.buttonText || "defaultDeleteButtonText"
+            }
+        </Button>
     }
 }
 

@@ -6,12 +6,11 @@ class CalendarColumn extends React.Component {
 
     constructor(props) {
         super(props);
-        // console.log(this.props.dates);
-        //this.state.dates = this.props.dates;
+        console.log(this.props.appointments);
     }
 
     createTermsPerColumn() {
-        return this.props.dates.map(date => (<CalendarTerm date={date}/>))
+        return this.props.appointments.map(appointment => (<CalendarTerm info={appointment}/>))
     }
 
     render() {
@@ -21,6 +20,7 @@ class CalendarColumn extends React.Component {
                 this.createTermsPerColumn()
             }
         </Col>
+        return null;
     }
 }
 

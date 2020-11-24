@@ -2,7 +2,7 @@ import React from 'react';
 
 class CalendarTerm extends React.Component {
     render() {
-        return <div> temrin {this.props.date} </div>
+        return <div> termin {this.props.info.start} {this.props.info.end} </div>
     }
 }
 

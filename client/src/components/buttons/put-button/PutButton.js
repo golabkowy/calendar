@@ -3,7 +3,11 @@ import {Button} from "react-bootstrap";
 
 class PutButton extends React.Component {
     render() {
-        return <Button>PUT BUTTON</Button>
+        return <Button>
+            {
+                this.props.buttonText || "defaultPutButtonText"
+            }
+        </Button>
     }
 }
 

@@ -3,6 +3,12 @@ const app = express();
 const port = 3030;
 const http = require('http').createServer(app);
 
+// express middleware, check express site for more details
+const cors = require('cors');
+const bodyParser = require('body-parser');
+
+const MongoClient = require('mongodb').MongoClient;
+
 const io = require('socket.io')(http, {
     cors: {
         origin: "http://localhost:3000",
@@ -10,23 +16,77 @@ const io = require('socket.io')(http, {
     }
 });
 
+class Appointment {
+    constructor(start, end, isReserved) {
+        this.start = start;
+        this.end = end;
+        this.isReserved = isReserved;
+    }
+}
+
+const calendarState = new Map();
+calendarState.set('monday', [new Appointment(8, 9, false), new Appointment(9, 10, false), new Appointment(10, 11, false), new Appointment(11, 12, false), new Appointment(12, 13, false), new Appointment(13, 14, false), new Appointment(14, 15, false), new Appointment(15, 16, false)]);
+calendarState.set('tuesday', [new Appointment(8, 9, false), new Appointment(9, 10, false), new Appointment(10, 11, false), new Appointment(11, 12, false), new Appointment(12, 13, false), new Appointment(13, 14, false), new Appointment(14, 15, false), new Appointment(15, 16, false)]);
+calendarState.set('wednesday', [new Appointment(8, 9, false), new Appointment(9, 10, false), new Appointment(10, 11, false), new Appointment(11, 12, false), new Appointment(12, 13, false), new Appointment(13, 14, false), new Appointment(14, 15, false), new Appointment(15, 16, false)]);
+calendarState.set('thursday', [new Appointment(8, 9, false), new Appointment(9, 10, false), new Appointment(10, 11, false), new Appointment(11, 12, false), new Appointment(12, 13, false), new Appointment(13, 14, false), new Appointment(14, 15, false), new Appointment(15, 16, false)]);
+calendarState.set('friday', [new Appointment(8, 9, false), new Appointment(9, 10, false), new Appointment(10, 11, false), new Appointment(11, 12, false), new Appointment(12, 13, false), new Appointment(13, 14, false), new Appointment(14, 15, false), new Appointment(15, 16, false)]);
+calendarState.set('saturday', [new Appointment(8, 9, false), new Appointment(9, 10, false), new Appointment(10, 11, false), new Appointment(11, 12, false), new Appointment(12, 13, false), new Appointment(13, 14, false), new Appointment(14, 15, false), new Appointment(15, 16, false)]);
+calendarState.set('sunday', [new Appointment(8, 9, false), new Appointment(9, 10, false), new Appointment(10, 11, false), new Appointment(11, 12, false), new Appointment(12, 13, false), new Appointment(13, 14, false), new Appointment(14, 15, false), new Appointment(15, 16, false)]);
+
+const book = (day, time) => {
+    const start = parseInt(time.charAt(0));
+    calendarState.get(day).find(appointment => appointment.start === start).isReserved = true;
+};
+
+const cancelBooking = (day, time) => {
+    const start = parseInt(time.charAt(0));
+    calendarState.get(day).find(appointment => appointment.start === start).isReserved = false;
+};
+
+app.use(cors());
+app.use(bodyParser.json());
+// app.use(bodyParser().json({type:'application/*+json'}));
+
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
+    res.sendFile(__dirname + '/index.html');    // hohohoh tak chyba można wysłac static reacta :) i problem portu oraz cors będzie rozwiązany ;)
 })
 
-app.get('/book-visit', (req, res) => {
-    res.send('Hello World!')
+app.get('/getInitialState', (req, res) => {
+    res.json(Object.fromEntries(calendarState));
+});
+
+app.post('/book', (req, res) => {
+    console.log(req.body);
+    book(req.body.day, req.body.time)
+    res.send({resp: 'Booked'})
 })
 
+app.post('/cancelBooking', (req, res) => {
+    console.log(req.body);
+    cancelBooking(req.body.day, req.body.time);
+    res.send({resp: 'Booking canceled'});
+});
+
+//##################
+MongoClient.connect('mongodb://localhost:27017/calendar', (error, client) => {
+    if (error) throw error
+
+    let db = client.db('calendar')
+
+    db.collection('mammals').find().toArray(function (err, result) {
+        if (err) throw err
+
+        console.log(result)
+    })
+});
+//###################
 // socket connection part
-// jaka jest roznica midzy connect a conenection to nie wiem ale dziala i tak i tak
-// dla innych natomiaast nie dzieła więc cćoś jest na rrzeczy
+
 //hmm hmm hmm
 
 // czy takie io.on to jest per client i wszystko powinno być w środku?
 var interval;
 io.on('connect', (socket) => {
-
     console.log('CLIENT POLACZONY');
     interval = setInterval(() => {
         console.log(`wysylam jakies testowe wiadomosci co czas`);
@@ -48,6 +108,7 @@ io.on('connect', (socket) => {
 // byc skbrksrbnięty na ten tym message
 
 // app.listen(port, () => {
+
 http.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
 })

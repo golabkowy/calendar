@@ -1,6 +1,7 @@
 import React from 'react';
 import CalendarColumn from "./CalendarColumn";
 import {Container, Row} from "react-bootstrap";
+import HttpService from "../buttons/HttpService";
 
 class CalendarBox extends React.Component {
 
@@ -14,26 +15,29 @@ class CalendarBox extends React.Component {
     // props to są propertki przekazane z komponentu wyżej, na starcie
     constructor(props) {
         super(props);
-        let termsMap = new Map();
-        termsMap.set('monday', [10, 13, 15, 18]);
-        termsMap.set('tuesday', [10, 13, 15, 18]);
-        termsMap.set('wednesday', [10, 13, 15, 18]);
-        termsMap.set('thursday', [10, 13, 15, 18]);
-        termsMap.set('friday', [10, 13, 15, 18]);
-        termsMap.set('saturday', [10, 13, 15, 18]);
-        termsMap.set('sunday', [10, 13, 15, 18]);
+        this.state = {
+            termsMap: new Map()
+        }
+    }
 
-        this.termsMap = termsMap;
+    componentDidMount() {
+        console.log("UPDATE");
+        HttpService.doGetPromise('getInitialState')
+            .then((response) => {
+                this.setState({termsMap: new Map(Object.entries(response.data))});
+            });
     }
 
     createColumns() {
-        return Array.from(this.termsMap.keys())
+        console.log("CREATE COLUMNS METHOD BOX");
+        console.log(this.state.termsMap);
+        return Array.from(this.state.termsMap.keys())
             .map(col => (<CalendarColumn columnName={col}
-                                         dates={this.termsMap.get(col)}/>));
+                                         appointments={this.state.termsMap.get(col)}/>));
     }
 
     render() {
-        // var test = new CalendarColumn("szymon");
+        console.log("RENDER METHOD BOX");
         return <Container>
             CALENDAR BOX
             <Row>
