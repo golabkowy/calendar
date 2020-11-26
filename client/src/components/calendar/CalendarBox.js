@@ -3,11 +3,10 @@ import CalendarColumn from "./CalendarColumn";
 import {Container, Row} from "react-bootstrap";
 import HttpService from "../buttons/HttpService";
 
+import './calendar-styles.css'
+
 class CalendarBox extends React.Component {
 
-
-    // co to są te props!!!???
-    // czym jest this.state,
     // czym jest this.context,
 
 
@@ -21,7 +20,6 @@ class CalendarBox extends React.Component {
     }
 
     componentDidMount() {
-        console.log("UPDATE");
         HttpService.doGetPromise('getInitialState')
             .then((response) => {
                 this.setState({termsMap: new Map(Object.entries(response.data))});
@@ -29,15 +27,12 @@ class CalendarBox extends React.Component {
     }
 
     createColumns() {
-        console.log("CREATE COLUMNS METHOD BOX");
-        console.log(this.state.termsMap);
         return Array.from(this.state.termsMap.keys())
             .map(col => (<CalendarColumn columnName={col}
                                          appointments={this.state.termsMap.get(col)}/>));
     }
 
     render() {
-        console.log("RENDER METHOD BOX");
         return <Container>
             CALENDAR BOX
             <Row>

@@ -1,34 +1,38 @@
 import React from 'react';
 import HttpService from "../../buttons/HttpService";
+import io from "socket.io-client";
+
 
 class ClientBox extends React.Component {
-    //tutaj w sumie można użyć tych livecyclów ;)
-    // albo lączymy automatycznie albo w sumie można dać takie lącznie po koliknięciu czyli z formularza
-
 
     constructor(props) {
         super(props);
-        //fajnie by byli to czytać może z jakiś propskow>?
         this.state = {
-            // socket: io('http://localhost:3030'),
             terms: [], //possible hours of appointment
             days: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
             hours: ['8-9', '9-10', '10-11', '11-12', '12-13', '13-14', '14-15', '15-16'],
             formDay: 'monday',
-            formHour: '8-9'
+            formHour: '8-9',
+            socketData: new Map(),
         }
 
-        //co tobi ta wspaniala funkcja bind()???
         this.formHandler = this.formHandler.bind(this);
         this.handleChangeDay = this.handleChangeDay.bind(this);
         this.handleChangeHour = this.handleChangeHour.bind(this);
-        //update forumlarza w zaleznosci od tego co dostanie z serverka, dostanie tak naprawwde zmianki :)
     }
 
-    // podobno dobrze jest uzupelniać dane na componendDidMount bo możliwa jest modyfikacja stanu jeszcze czy coś w tym stylu
+    componentDidMount() {
+        const socket = io('http://localhost:3030'); // it should trigger on server ('connection')
+
+        socket.onopen('connection', () => {
+            socket.send('hello connect to client');
+        });
+        socket.on('message', (arg) => {
+            this.setState({socketData: new Map(Object.entries(arg))});
+        });
+    }
 
     getTerms() {
-
     }
 
     formHandler(event) {
@@ -39,23 +43,18 @@ class ClientBox extends React.Component {
     }
 
     handleChangeDay(event) {
-        console.log("CVHANGE VALUE DAY");
-        console.log(event.target.value);
         this.setState({formDay: event.target.value});
     }
 
     handleChangeHour(event) {
-        console.log("CVHANGE VALUE HOUR");
-        console.log(event.target.value);
         this.setState({formHour: event.target.value});
     }
 
     render() {
+        console.log("RENBDER CLIENT BOXA");
+        console.log(this.state.socketData.get('monday'));
         return <div>
             CLIENT BOX
-            socket status
-            formularz
-            {/*<form onSubmit={this.handleSubmit}>*/}
             <form>
                 <label>
                     Wybierz dzien:

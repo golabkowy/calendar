@@ -3,12 +3,17 @@ const app = express();
 const port = 3030;
 const http = require('http').createServer(app);
 
+//event driven heh
+const events = require('events');
+
+
 // express middleware, check express site for more details
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const MongoClient = require('mongodb').MongoClient;
 
+//bind socet io to the existing http server
 const io = require('socket.io')(http, {
     cors: {
         origin: "http://localhost:3000",
@@ -43,6 +48,19 @@ const cancelBooking = (day, time) => {
     calendarState.get(day).find(appointment => appointment.start === start).isReserved = false;
 };
 
+//ok robimy sobie w takim razie event drivent development
+// do tego służą EventEmmitery chyb ten stuff jest wbudowany w Node
+// a nie jednak potrzebujemy events z node
+
+// const eventEmmiter = new events.EventEmitter();
+// eventEmmiter.on('eventName', 'eventHandler');
+//
+// const eventHandler = () => {
+//   console.log("zlapany event");
+// };
+
+//################################ koniec tego event driven
+
 app.use(cors());
 app.use(bodyParser.json());
 // app.use(bodyParser().json({type:'application/*+json'}));
@@ -59,6 +77,9 @@ app.post('/book', (req, res) => {
     console.log(req.body);
     book(req.body.day, req.body.time)
     res.send({resp: 'Booked'})
+    // const clients_connected = io.sockets()
+    const x = io.of("/");
+    console.log(x);
 })
 
 app.post('/cancelBooking', (req, res) => {
@@ -87,14 +108,14 @@ MongoClient.connect('mongodb://localhost:27017/calendar', (error, client) => {
 // czy takie io.on to jest per client i wszystko powinno być w środku?
 var interval;
 io.on('connect', (socket) => {
-    console.log('CLIENT POLACZONY');
-    interval = setInterval(() => {
-        console.log(`wysylam jakies testowe wiadomosci co czas`);
-        socket.emit('test1', "some message test1");
-        socket.emit('test2', "some message test1");
-        socket.emit('test3', "some message test1");
-        console.log("o co kamans2");
-    }, 5000);
+    //tych logów jest tyle rpzez to chyba ze są te requesty od switching protocola i to juz na warstwie WSz
+    console.log('CLIENT POLACZONY' + socket.id);
+    // interval = setInterval(() => {
+    // console.log(`wysylam jakies testowe wiadomosci co czas`);
+    socket.emit('message', Object.fromEntries(calendarState));
+    // socket.emit('test2', "some message test1");
+    // socket.emit('test3', "some message test1");
+    // }, 5000);
 
     socket.on('disconnect', (reason) => {
         console.log(`Client disconnected  ${reason}`);

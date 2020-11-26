@@ -2,6 +2,8 @@ import React from 'react';
 import CalendarTerm from "./CalendarTerm";
 import Col from "react-bootstrap/cjs/Col";
 
+import './calendar-styles.css'
+
 class CalendarColumn extends React.Component {
 
     constructor(props) {

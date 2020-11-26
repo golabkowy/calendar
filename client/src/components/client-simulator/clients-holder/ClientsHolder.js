@@ -9,25 +9,18 @@ class ClientsHolder extends React.Component {
         this.state = {
             clientBoxes: [],
         }
-        this.setStateClients = this.setStateClients.bind(this);
+        this.addClient = this.addClient.bind(this);
     }
 
-    setStateClients = (clientBoxess) => {
-        console.log("UDALO SIE COS TAM WYWOLAC");
-        console.log(clientBoxess);
-        //a moze i nawet set state by się przydało :)
-        this.state.clientBoxes = new Array(clientBoxess);
-        this.setState({clientBoxes:clientBoxess});
+    addClient = (clientBox) => {
+        this.setState({clientBoxes: this.state.clientBoxes.concat(clientBox)});
     }
 
     render() {
         return <Container>
             CLIENTS HOLDER
-            <ClientsHolderNav setClients={this.setStateClients}></ClientsHolderNav>
-            <ClientsHolderClientsSection ></ClientsHolderClientsSection>
-            {
-                this.state.clientBoxes
-            }
+            <ClientsHolderNav addClient={this.addClient}></ClientsHolderNav>
+            <ClientsHolderClientsSection clientBoxes={this.state.clientBoxes}></ClientsHolderClientsSection>
         </Container>
     }
 }

@@ -10,11 +10,9 @@ import ClientsHolder from "./components/client-simulator/clients-holder/ClientsH
 function App() {
 
     // const socket = io('http://localhost:3030'); // it should trigger on server ('connection')
-
     // socket.onopen('connection', () => {
     //     socket.send('hello connectied to client');
     // });
-    //
     // socket.on('message', (arg) => {
     //     console.log("In message handler");
     //     console.log(arg);
