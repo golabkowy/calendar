@@ -3,8 +3,7 @@ import Menu from './components/Menu';
 import CalendarBox from "./components/calendar/CalendarBox";
 // Importing the Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-import io from 'socket.io-client';
+import HttpService from "./components/buttons/HttpService";
 import ClientsHolder from "./components/client-simulator/clients-holder/ClientsHolder";
 
 function App() {
@@ -22,12 +21,16 @@ function App() {
     //     console.log(msg);
     //     console.log("Any message handler");
     // });
+    const initialState = HttpService.doGetPromise('getInitialState')
+        .then((response) => {
+            return new Map(Object.entries(response.data));
+        });
 
     return (
         <div className="App">
             <Menu>asd</Menu>
-            <CalendarBox>asd</CalendarBox>
-            <ClientsHolder>Client Holder</ClientsHolder>
+            <CalendarBox initialState={initialState}>asd</CalendarBox>
+            <ClientsHolder initialState={initialState}>Client Holder</ClientsHolder>
         </div>
 
     );

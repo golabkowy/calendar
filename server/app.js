@@ -39,6 +39,7 @@ calendarState.set('saturday', [new Appointment(8, 9, false), new Appointment(9, 
 calendarState.set('sunday', [new Appointment(8, 9, false), new Appointment(9, 10, false), new Appointment(10, 11, false), new Appointment(11, 12, false), new Appointment(12, 13, false), new Appointment(13, 14, false), new Appointment(14, 15, false), new Appointment(15, 16, false)]);
 
 const book = (day, time) => {
+    //xd godzina 14sta to dwa znaki, trzeba brać wszystko do znaku - xD ale jestem plackiem
     const start = parseInt(time.charAt(0));
     calendarState.get(day).find(appointment => appointment.start === start).isReserved = true;
 };
@@ -77,15 +78,16 @@ app.post('/book', (req, res) => {
     console.log(req.body);
     book(req.body.day, req.body.time)
     res.send({resp: 'Booked'})
-    // const clients_connected = io.sockets()
-    const x = io.of("/");
-    console.log(x);
+
+    io.sockets.emit('message',Object.fromEntries(calendarState));
+
 })
 
 app.post('/cancelBooking', (req, res) => {
     console.log(req.body);
     cancelBooking(req.body.day, req.body.time);
     res.send({resp: 'Booking canceled'});
+    io.sockets.emit('message',Object.fromEntries(calendarState));
 });
 
 //##################

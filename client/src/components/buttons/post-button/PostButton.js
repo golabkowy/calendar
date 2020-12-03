@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button} from "react-bootstrap";
-import {axios} from 'axios';
+import axios from 'axios';
 
 class PostButton extends React.Component {
 
@@ -19,7 +19,7 @@ class PostButton extends React.Component {
     }
 
     render() {
-        return <Button onClick={this.props.onClick || this.doPost}>
+        return <Button id={this.props.id} onClick={this.props.onClick || this.doPost}>
             {
                 this.props.buttonText || "defaultPostButtonText"
             }

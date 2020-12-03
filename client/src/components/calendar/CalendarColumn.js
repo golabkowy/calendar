@@ -8,7 +8,6 @@ class CalendarColumn extends React.Component {
 
     constructor(props) {
         super(props);
-        console.log(this.props.appointments);
     }
 
     createTermsPerColumn() {
